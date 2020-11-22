@@ -62,4 +62,21 @@ public class AddressBookTestCase {
         boolean result = addressBookDB.checkAddressBookDataSyncWithDB("Manish");
         Assert.assertTrue(result);
     }
+
+    @Test
+    public void givenAddressData_whenDelete_shouldSyncWithDB() throws InvalidException {
+        addressBookDB.deleteAddressBookData("Manish");
+        boolean result = addressBookDB.checkAddressBookDataSyncWithDB("Manish");
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    public void givenAddressData_whenDeleteNotFoundData_shouldThrowException() throws InvalidException {
+        try {
+            addressBookDB.deleteAddressBookData("Manoj");
+        } catch (InvalidException invalidException) {
+            System.out.println(invalidException.getMessage());
+            Assert.assertEquals("DATA_NOT_FOUND", invalidException.getMessage());
+        }
+    }
 }

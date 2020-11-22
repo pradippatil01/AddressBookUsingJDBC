@@ -85,6 +85,20 @@ public class AddressBookDB {
         }
     }
 
+    public void deleteAddressBookData(String name) throws InvalidException {
+        String sql = "DELETE FROM PERSONDATA WHERE FIRSTNAME=?";
+        try (Connection connection = dbConnection.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            int row = preparedStatement.executeUpdate();
+            System.out.println("deleted row : " + row);
+        } catch (SQLException exception) {
+            throw new InvalidException("DATA_NOT_FOUND",
+                    InvalidException.ExceptionType.SQL_EXCEPTION);
+        }
+    }
+
+
     public boolean checkAddressBookDataSyncWithDB(String name) throws InvalidException {
         String sql = "SELECT * FROM PERSONDATA WHERE FIRSTNAME = ?";
         String fetchedName = null;
