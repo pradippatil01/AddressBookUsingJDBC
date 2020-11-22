@@ -65,6 +65,26 @@ public class AddressBookDB {
         }
     }
 
+    public void addNewAddressBookData(String firstName, String lastName, String city, String state,
+                                      int zipCode, long phoneNumber, LocalDate date) throws InvalidException {
+        int person_id = -1;
+        AddressBookData addressBookData = null;
+        String sql = String.format("Insert into personData(firstName,lastName,city,state,zipcode,phoneNumber,dateAdded)" +
+                "values('%s','%s','%s','%s',%s,%s,'%s')", firstName, lastName, city, state, zipCode, phoneNumber, Date.valueOf(date));
+        try (Connection connection = dbConnection.getConnection()) {
+            Statement statement = connection.createStatement();
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            if (rowAffected == 1) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) person_id = resultSet.getInt(1);
+            }
+            addressBookData = new AddressBookData(person_id, firstName, lastName, city, state, zipCode, phoneNumber, date);
+        } catch (SQLException | InvalidException exception) {
+            throw new InvalidException("DATA_NOT_ADDED",
+                    InvalidException.ExceptionType.SQL_EXCEPTION);
+        }
+    }
+
     public boolean checkAddressBookDataSyncWithDB(String name) throws InvalidException {
         String sql = "SELECT * FROM PERSONDATA WHERE FIRSTNAME = ?";
         String fetchedName = null;

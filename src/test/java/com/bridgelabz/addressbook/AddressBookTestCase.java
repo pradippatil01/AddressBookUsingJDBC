@@ -39,7 +39,6 @@ public class AddressBookTestCase {
         int i = addressBookDB.updateAddressBookData(SQL_UPDATE);
         boolean result = addressBookDB.checkAddressBookDataSyncWithDB("pradip");
         Assert.assertTrue(result);
-
     }
 
     @Test
@@ -55,5 +54,12 @@ public class AddressBookTestCase {
         String city = "pune";
         List<AddressBookData> addressBookData = addressBookDB.readAddressBookDataForCity(city);
         Assert.assertEquals(2, addressBookData.size());
+    }
+
+    @Test
+    public void givenNewAddressData_whenAdded_shouldSyncWithDB() throws InvalidException {
+        addressBookDB.addNewAddressBookData("Manish", "Patil", "Surat", "Gujarat", 234563, 9665353267L, LocalDate.now());
+        boolean result = addressBookDB.checkAddressBookDataSyncWithDB("Manish");
+        Assert.assertTrue(result);
     }
 }
