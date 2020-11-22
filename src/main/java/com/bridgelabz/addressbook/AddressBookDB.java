@@ -32,5 +32,45 @@ public class AddressBookDB {
                     InvalidException.ExceptionType.SQL_EXCEPTION);
         }
     }
+
+    public int updateAddressBookData(String sql) throws InvalidException {
+
+        try (Connection connection = dbConnection.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            String city = "Surat";
+            String state = "GJ";
+            int zipCode = 564534;
+            String firstName = "pradip";
+            preparedStatement.setString(1, city);
+            preparedStatement.setString(2, state);
+            preparedStatement.setInt(3, zipCode);
+            preparedStatement.setString(4, firstName);
+            int rowAffected = preparedStatement.executeUpdate();
+            System.out.printf("Row affected %d%n", rowAffected);
+            return rowAffected;
+        } catch (SQLException exception) {
+          exception.printStackTrace();
+        }
+        return 0;
+    }
+
+    public boolean checkAddressBookDataSyncWithDB(String name) throws InvalidException {
+        String sql = "SELECT * FROM PERSONDATA WHERE FIRSTNAME = ?";
+        String fetchedName = null;
+        try (Connection connection = dbConnection.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                fetchedName = rs.getString("firstName");
+                return fetchedName.equalsIgnoreCase(name);
+            }
+            preparedStatement.close();
+        } catch (SQLException | InvalidException exception) {
+            throw new InvalidException("data not found",
+                    InvalidException.ExceptionType.SQL_EXCEPTION);
+        }
+        return false;
+    }
 }
 
