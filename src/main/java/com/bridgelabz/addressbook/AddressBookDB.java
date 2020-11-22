@@ -35,10 +35,14 @@ public class AddressBookDB {
     }
 
     public List<AddressBookData> readAddressBookDataForDateRange(LocalDate startDate, LocalDate endDate) throws InvalidException {
-        String sql = String.format("SELECT * FROM personData WHERE dateAdded BETWEEN '%S' AND '%S';",
+        String sql = String.format("SELECT * FROM PERSONDATA WHERE DATEADDED BETWEEN '%S' AND '%S';",
                 Date.valueOf(startDate), Date.valueOf(endDate));
         return this.getAddressBookDataFromDB(sql);
+    }
 
+    public List<AddressBookData> readAddressBookDataForCity(String city) throws InvalidException {
+        String sql = String.format("SELECT * FROM PERSONDATA WHERE CITY = '%S';", city);
+        return this.getAddressBookDataFromDB(sql);
     }
 
     public int updateAddressBookData(String sql) throws InvalidException {

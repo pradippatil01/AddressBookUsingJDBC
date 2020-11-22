@@ -49,4 +49,11 @@ public class AddressBookTestCase {
         List<AddressBookData> addressBookData = addressBookDB.readAddressBookDataForDateRange(startDate, endDate);
         Assert.assertEquals(4, addressBookData.size());
     }
+
+    @Test
+    public void givenAddressBookDB_whenRetrievedForParticularCity_shouldMatchCount() throws InvalidException {
+        String city = "pune";
+        List<AddressBookData> addressBookData = addressBookDB.readAddressBookDataForCity(city);
+        Assert.assertEquals(2, addressBookData.size());
+    }
 }
