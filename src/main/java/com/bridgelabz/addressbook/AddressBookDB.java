@@ -49,9 +49,9 @@ public class AddressBookDB {
             System.out.printf("Row affected %d%n", rowAffected);
             return rowAffected;
         } catch (SQLException exception) {
-          exception.printStackTrace();
+            throw new InvalidException("JDBC_UPDATE_ERROR",
+                    InvalidException.ExceptionType.SQL_EXCEPTION);
         }
-        return 0;
     }
 
     public boolean checkAddressBookDataSyncWithDB(String name) throws InvalidException {
