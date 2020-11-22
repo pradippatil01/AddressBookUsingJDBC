@@ -27,7 +27,6 @@ public class AddressBookDB {
                 addressBookDataList.add(new AddressBookData(personId, firstName, lastName, city, state, zipCode, phoneNUmber));
             }
             return addressBookDataList;
-
         } catch (SQLException exception) {
             throw new InvalidException("JDBC_TABLE_NAME_WRONG",
                     InvalidException.ExceptionType.SQL_EXCEPTION);
