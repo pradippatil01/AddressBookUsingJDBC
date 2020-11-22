@@ -1,6 +1,7 @@
 package com.bridgelabz.addressbook;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +34,14 @@ public class AddressBookDB {
         }
     }
 
-    public int updateAddressBookData(String sql) throws InvalidException {
+    public List<AddressBookData> readAddressBookDataForDateRange(LocalDate startDate, LocalDate endDate) throws InvalidException {
+        String sql = String.format("SELECT * FROM personData WHERE dateAdded BETWEEN '%S' AND '%S';",
+                Date.valueOf(startDate), Date.valueOf(endDate));
+        return this.getAddressBookDataFromDB(sql);
 
+    }
+
+    public int updateAddressBookData(String sql) throws InvalidException {
         try (Connection connection = dbConnection.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             String city = "Surat";

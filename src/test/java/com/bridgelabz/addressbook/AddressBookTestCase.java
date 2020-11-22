@@ -2,13 +2,14 @@ package com.bridgelabz.addressbook;
 
 import org.junit.*;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class AddressBookTestCase {
     private static final String SQL_READ = "SELECT * FROM PERSONDATA";
     private static final String SQL_READ_WRONG_QUERY = "SELECT * FROM PERSONDATA2";
     private static final String SQL_UPDATE = "UPDATE PERSONDATA " +
-                                             "SET CITY=? ,STATE=?, ZIPCODE=?, WHERE FIRSTNAME=? ";
+            "SET CITY=? ,STATE=?, ZIPCODE=?, WHERE FIRSTNAME=? ";
 
     AddressBookDB addressBookDB;
 
@@ -39,5 +40,13 @@ public class AddressBookTestCase {
         boolean result = addressBookDB.checkAddressBookDataSyncWithDB("pradip");
         Assert.assertTrue(result);
 
+    }
+
+    @Test
+    public void givenAddressBookDB_whenRetrievedForParticularPeriod_shouldMatchCount() throws InvalidException {
+        LocalDate startDate = LocalDate.of(2018, 1, 1);
+        LocalDate endDate = LocalDate.now();
+        List<AddressBookData> addressBookData = addressBookDB.readAddressBookDataForDateRange(startDate, endDate);
+        Assert.assertEquals(4, addressBookData.size());
     }
 }
