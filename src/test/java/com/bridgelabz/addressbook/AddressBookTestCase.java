@@ -20,14 +20,15 @@ public class AddressBookTestCase {
 
     @Test
     public void givenAddressBookDB_whenRetrievedData_MatchCountWithDB() throws InvalidException {
-        List<AddressBookData> addressBookData = addressBookDB.readAddressBookData(SQL_READ);
+        List<AddressBookData> addressBookData = addressBookDB.readPerson(SQL_READ);
         Assert.assertEquals(4, addressBookData.size());
     }
 
     @Test
     public void givenAddressBookDB_whenPassWrongTableNameAtRetrieve_ShouldThrowException() {
         try {
-            List<AddressBookData> addressBookData = addressBookDB.readAddressBookData(SQL_READ_WRONG_QUERY);
+            List<AddressBookData> addressBookData = addressBookDB.readPerson(SQL_READ);
+            Assert.assertEquals(4, addressBookData.size());
         } catch (InvalidException invalidException) {
             System.out.println(invalidException.getMessage());
             Assert.assertEquals("JDBC_TABLE_NAME_WRONG", invalidException.getMessage());
@@ -36,7 +37,7 @@ public class AddressBookTestCase {
 
     @Test
     public void givenAddressBookDB_whenUpdated_syncWithDB() throws InvalidException {
-        int i = addressBookDB.updateAddressBookData(SQL_UPDATE);
+        int i = addressBookDB.updatePerson(SQL_UPDATE);
         boolean result = addressBookDB.checkAddressBookDataSyncWithDB("pradip");
         Assert.assertTrue(result);
     }
@@ -45,20 +46,20 @@ public class AddressBookTestCase {
     public void givenAddressBookDB_whenRetrievedForParticularPeriod_shouldMatchCount() throws InvalidException {
         LocalDate startDate = LocalDate.of(2018, 1, 1);
         LocalDate endDate = LocalDate.now();
-        List<AddressBookData> addressBookData = addressBookDB.readAddressBookDataForDateRange(startDate, endDate);
+        List<AddressBookData> addressBookData = addressBookDB.readPersonAddedForGivenDateRange(startDate, endDate);
         Assert.assertEquals(4, addressBookData.size());
     }
 
     @Test
     public void givenAddressBookDB_whenRetrievedForParticularCity_shouldMatchCount() throws InvalidException {
         String city = "pune";
-        List<AddressBookData> addressBookData = addressBookDB.readAddressBookDataForCity(city);
+        List<AddressBookData> addressBookData = addressBookDB.readPersonForGivenCity(city);
         Assert.assertEquals(2, addressBookData.size());
     }
 
     @Test
     public void givenNewAddressData_whenAdded_shouldSyncWithDB() throws InvalidException {
-        addressBookDB.addNewAddressBookData("Manish", "Patil", "Surat", "Gujarat", 234563, 9665353267L, LocalDate.now());
+        addressBookDB.addNewPerson("Manish", "Patil", "Surat", "Gujarat", 234563, 9665353267L, LocalDate.now(),"FriendAddressBook");
         boolean result = addressBookDB.checkAddressBookDataSyncWithDB("Manish");
         Assert.assertTrue(result);
     }

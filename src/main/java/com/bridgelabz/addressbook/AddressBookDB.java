@@ -8,11 +8,11 @@ import java.util.List;
 public class AddressBookDB {
     DBConnection dbConnection = new DBConnection();
 
-    public List<AddressBookData> readAddressBookData(String sql) throws InvalidException {
-        return this.getAddressBookDataFromDB(sql);
+    public List<AddressBookData> readPerson(String sql) throws InvalidException {
+        return this.getPersonFromDB(sql);
     }
 
-    public List<AddressBookData> getAddressBookDataFromDB(String sql) throws InvalidException {
+    public List<AddressBookData> getPersonFromDB(String sql) throws InvalidException {
         List<AddressBookData> addressBookDataList = new ArrayList<>();
         try (Connection connection = dbConnection.getConnection()) {
             Statement statement = connection.createStatement();
@@ -30,22 +30,22 @@ public class AddressBookDB {
             return addressBookDataList;
         } catch (SQLException exception) {
             throw new InvalidException("JDBC_TABLE_NAME_WRONG",
-                    InvalidException.ExceptionType.SQL_EXCEPTION);
+                    InvalidException.ExceptionType.DATA_NOT_ABLE_READ);
         }
     }
 
-    public List<AddressBookData> readAddressBookDataForDateRange(LocalDate startDate, LocalDate endDate) throws InvalidException {
+    public List<AddressBookData> readPersonAddedForGivenDateRange(LocalDate startDate, LocalDate endDate) throws InvalidException {
         String sql = String.format("SELECT * FROM PERSONDATA WHERE DATEADDED BETWEEN '%S' AND '%S';",
                 Date.valueOf(startDate), Date.valueOf(endDate));
-        return this.getAddressBookDataFromDB(sql);
+        return this.getPersonFromDB(sql);
     }
 
-    public List<AddressBookData> readAddressBookDataForCity(String city) throws InvalidException {
+    public List<AddressBookData> readPersonForGivenCity(String city) throws InvalidException {
         String sql = String.format("SELECT * FROM PERSONDATA WHERE CITY = '%S';", city);
-        return this.getAddressBookDataFromDB(sql);
+        return this.getPersonFromDB(sql);
     }
 
-    public int updateAddressBookData(String sql) throws InvalidException {
+    public int updatePerson(String sql) throws InvalidException {
         try (Connection connection = dbConnection.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             String city = "Surat";
@@ -61,16 +61,16 @@ public class AddressBookDB {
             return rowAffected;
         } catch (SQLException exception) {
             throw new InvalidException("JDBC_UPDATE_ERROR",
-                    InvalidException.ExceptionType.SQL_EXCEPTION);
+                    InvalidException.ExceptionType.DATA_NOT_UPDATE);
         }
     }
 
-    public void addNewAddressBookData(String firstName, String lastName, String city, String state,
-                                      int zipCode, long phoneNumber, LocalDate date) throws InvalidException {
+    public void addNewPerson(String firstName, String lastName, String city, String state,
+                             int zipCode, long phoneNumber, LocalDate date, String bookType) throws InvalidException {
         int person_id = -1;
         AddressBookData addressBookData = null;
         String sql = String.format("Insert into personData(firstName,lastName,city,state,zipcode,phoneNumber,dateAdded)" +
-                "values('%s','%s','%s','%s',%s,%s,'%s')", firstName, lastName, city, state, zipCode, phoneNumber, Date.valueOf(date));
+                "values('%s','%s','%s','%s',%s,%s,%s,'%s')", firstName, lastName, city, state, zipCode, phoneNumber, bookType, Date.valueOf(date));
         try (Connection connection = dbConnection.getConnection()) {
             Statement statement = connection.createStatement();
             int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
@@ -81,7 +81,7 @@ public class AddressBookDB {
             addressBookData = new AddressBookData(person_id, firstName, lastName, city, state, zipCode, phoneNumber, date);
         } catch (SQLException | InvalidException exception) {
             throw new InvalidException("DATA_NOT_ADDED",
-                    InvalidException.ExceptionType.SQL_EXCEPTION);
+                    InvalidException.ExceptionType.DATA_NOT_ADDED);
         }
     }
 
@@ -94,7 +94,7 @@ public class AddressBookDB {
             System.out.println("deleted row : " + row);
         } catch (SQLException exception) {
             throw new InvalidException("DATA_NOT_FOUND",
-                    InvalidException.ExceptionType.SQL_EXCEPTION);
+                    InvalidException.ExceptionType.DATA_NOT_FOUND);
         }
     }
 
@@ -112,8 +112,8 @@ public class AddressBookDB {
             }
             preparedStatement.close();
         } catch (SQLException | InvalidException exception) {
-            throw new InvalidException("data not found",
-                    InvalidException.ExceptionType.SQL_EXCEPTION);
+            throw new InvalidException("DATA_NOT_FOUND",
+                    InvalidException.ExceptionType.DATA_NOT_FOUND);
         }
         return false;
     }
